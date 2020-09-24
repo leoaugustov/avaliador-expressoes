@@ -9,6 +9,14 @@ function salvarRelop() {
     salvarToken('RELOP');
 }
 
+function salvarConstante() {
+    salvarToken('CONSTANTE');
+}
+
+function salvarTokenDesconhecida() {
+    salvarToken('DESCONHECIDO');
+}
+
 function salvarToken(tipo) {
     tokens.push({
         lexema,
@@ -131,26 +139,50 @@ function analisar(codigo) {
                     estado = 15;
                     lexema += caracter;
                 }else {
-                    estado = 17;
+                    estado = 19;
                     c--;
                 }
                 break;
 
             case 15:
-                if(ehDigito(caracter) || caracter == '.') {
+                if(ehDigito(caracter)) {
+                    lexema += caracter;
+                }else if(caracter == '.') {
+                    estado = 16;
                     lexema += caracter;
                 }else {
                     if(caracter != marcoFinalEntrada) {
                         c--;
                     }
                     estado = 0;
-                    salvarToken('CONSTANTE');
+                    salvarConstante();
                 }
                 break;
 
+            case 16:
+                if(ehDigito(caracter)) {
+                    estado = 17;
+                    lexema += caracter;
+                }else {
+                    salvarTokenDesconhecida();
+                }
+                break;
+            
             case 17:
+                if(ehDigito(caracter)) {
+                    lexema += caracter;
+                }else {
+                    if(caracter != marcoFinalEntrada) {
+                        c--;
+                    }
+                    estado = 0;
+                    salvarConstante();
+                }
+                break;
+
+            case 19:
                 if(ehLetra(caracter)) {
-                    estado = 18;
+                    estado = 20;
                     lexema += caracter;
                 }else if(caracter != marcoFinalEntrada) {
                     estado = 0;
@@ -161,12 +193,12 @@ function analisar(codigo) {
                         lexema = '';
                         tokens.push(tokenSimboloValido);
                     }else {
-                        salvarToken('DESCONHECIDO');
+                        salvarTokenDesconhecida();
                     }
                 }
                 break;
 
-            case 18:
+            case 20:
                 if(ehLetra(caracter) || ehDigito(caracter)) {
                     lexema += caracter;
                 }else {
