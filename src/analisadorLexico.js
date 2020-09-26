@@ -5,6 +5,15 @@ const marcoFinalEntrada = '\0';
 let tokens = [];
 let lexema = '';
 
+function nenhumaTokenSalva() {
+    return tokens.length == 0;
+}
+
+function lexemaUltimaTokenEh(...caracteres) {
+    let ultimaToken = tokens.slice(-1).pop();
+    return ultimaToken && caracteres.some(caracter => caracter == ultimaToken.lexema);
+}
+
 function salvarRelop() {
     salvarToken('RELOP');
 }
@@ -116,14 +125,14 @@ function analisar(codigo) {
                     estado = 12;
                     lexema += caracter;
                 }else {
-                    estado = 14;
+                    estado = 15;
                     c--;
                 }
                 break;
 
             case 12:
-                if(ehDigito(caracter)) {
-                    estado = 14;
+                if((nenhumaTokenSalva() || lexemaUltimaTokenEh('+', '-', '(')) && ehDigito(caracter)) {
+                    estado = 15;
                     c--;
                 }else {
                     if(caracter != marcoFinalEntrada) {
@@ -134,41 +143,47 @@ function analisar(codigo) {
                 }
                 break;
 
-            case 14:
-                if(ehDigito(caracter)) {
-                    estado = 15;
-                    lexema += caracter;
-                }else {
-                    estado = 19;
-                    c--;
-                }
-                break;
-
             case 15:
                 if(ehDigito(caracter)) {
-                    lexema += caracter;
-                }else if(caracter == '.') {
                     estado = 16;
                     lexema += caracter;
                 }else {
-                    if(caracter != marcoFinalEntrada) {
-                        c--;
-                    }
-                    estado = 0;
-                    salvarConstante();
+                    estado = 21;
+                    c--;
                 }
                 break;
 
             case 16:
                 if(ehDigito(caracter)) {
-                    estado = 17;
                     lexema += caracter;
+                }else if(caracter == '.') {
+                    estado = 17;
                 }else {
+                    if(caracter != marcoFinalEntrada) {
+                        c--;
+                    }
+                    estado = 0;
+                    salvarConstante();
+                }
+                break;
+
+            case 17:
+                if(ehDigito(caracter)) {
+                    estado = 19;
+                    lexema += '.' + caracter;
+                }else {
+                    if(caracter != marcoFinalEntrada) {
+                        c--;
+                    }
+                    estado = 0;
+                    salvarConstante();
+
+                    lexema += '.';
                     salvarTokenDesconhecida();
                 }
                 break;
             
-            case 17:
+            case 19:
                 if(ehDigito(caracter)) {
                     lexema += caracter;
                 }else {
@@ -180,9 +195,9 @@ function analisar(codigo) {
                 }
                 break;
 
-            case 19:
+            case 21:
                 if(ehLetra(caracter)) {
-                    estado = 20;
+                    estado = 22;
                     lexema += caracter;
                 }else if(caracter != marcoFinalEntrada) {
                     estado = 0;
@@ -198,7 +213,7 @@ function analisar(codigo) {
                 }
                 break;
 
-            case 20:
+            case 22:
                 if(ehLetra(caracter) || ehDigito(caracter)) {
                     lexema += caracter;
                 }else {
