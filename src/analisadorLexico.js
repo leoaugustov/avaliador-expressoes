@@ -58,7 +58,7 @@ function analisar(codigo) {
 
         switch(estado) {
             case 0:
-                if(caracter == ' ' || caracter == '\n' || ehCaracterNovaLinha(caracter)) {
+                if(caracter == ' ' || ehCaracterNovaLinha(caracter)) {
                     estado = 0;
                 }else if(caracter == '<') {
                     estado = 1;
