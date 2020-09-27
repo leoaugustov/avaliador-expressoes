@@ -5,6 +5,8 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "build": "cross-env NODE_ENV=production webpack"
   },
   "keywords": [],
@@ -15,6 +17,7 @@
     "@babel/preset-env": "^7.11.5",
     "babel-loader": "^8.1.0",
     "cross-env": "^7.0.2",
+    "jest": "^26.4.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"

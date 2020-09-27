@@ -5,13 +5,13 @@ const marcoFinalEntrada = '\0';
 let tokens = [];
 let lexema = '';
 
-function nenhumaTokenSalva() {
-    return tokens.length == 0;
-}
-
-function lexemaUltimaTokenEh(...caracteres) {
+function ultimaTokenNaoEh(...tipos) {
     let ultimaToken = tokens.slice(-1).pop();
-    return ultimaToken && caracteres.some(caracter => caracter == ultimaToken.lexema);
+    
+    if(ultimaToken) {
+        return tipos.some(tipoToken => tipoToken == ultimaToken.tipo) == false;
+    }
+    return true;
 }
 
 function salvarRelop() {
@@ -131,7 +131,7 @@ function analisar(codigo) {
                 break;
 
             case 12:
-                if((nenhumaTokenSalva() || lexemaUltimaTokenEh('+', '-', '(')) && ehDigito(caracter)) {
+                if(ultimaTokenNaoEh('CONSTANTE', 'IDENTIFICADOR', 'FECHAMENTO-PARENTESES') && ehDigito(caracter)) {
                     estado = 15;
                     c--;
                 }else {
