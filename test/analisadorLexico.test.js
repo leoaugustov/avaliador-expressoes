@@ -1,5 +1,8 @@
 import analisadorLexico from '../src/analisadorLexico';
 
+const TIPO_RELOP = 'RELOP';
+const TIPO_MULOP = 'MULOP';
+const TIPO_ADDOP = 'ADDOP';
 const TIPO_CONSTANTE = 'CONSTANTE';
 const TIPO_IDENTIFICADOR = 'IDENTIFICADOR';
 const TOKEN_DESCONHECIDA_LEXEMA_PONTO = {
@@ -19,56 +22,65 @@ const TOKEN_VIRGULA = {
     lexema: ','
     };
 const TOKEN_ADDOP_LEXEMA_SINAL_MENOS = {
-tipo: 'ADDOP',
-lexema: '-'
+    tipo: TIPO_ADDOP,
+    lexema: '-'
 };
 const TOKEN_MULOP = {
-    tipo: 'MULOP',
+    tipo: TIPO_MULOP,
     lexema: '*'
 };
 const TOKEN_RELOP = {
-    tipo: 'RELOP',
+    tipo: TIPO_RELOP,
     lexema: '='
 };
 
+function testarQuandoDeveGerarUmaUnicaToken(lexema, tipo) {
+    test(`deve retornar ${tipo} com lexema ${lexema}`, () => {
+        const tokens = analisadorLexico.analisar(lexema);
+
+        expect(tokens).toEqual([{
+            lexema,
+            tipo
+        }]);
+    });
+}
+
+describe('Reconhecimento de RELOPs', () => {
+    testarQuandoDeveGerarUmaUnicaToken('=', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<>', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<=', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('>', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('>=', TIPO_RELOP);
+});
+
+describe('Reconhecimento de MULOPs', () => {
+    testarQuandoDeveGerarUmaUnicaToken('*', TIPO_MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('/', TIPO_MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('div', TIPO_MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('mod', TIPO_MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('and', TIPO_MULOP);
+});
+
+describe('Reconhecimento de ADDOPs', () => {
+    testarQuandoDeveGerarUmaUnicaToken('+', TIPO_ADDOP);
+    testarQuandoDeveGerarUmaUnicaToken('-', TIPO_ADDOP);
+    testarQuandoDeveGerarUmaUnicaToken('or', TIPO_ADDOP);
+});
+
+describe('Reconhecimento de Identificadores', () => {
+    testarQuandoDeveGerarUmaUnicaToken('a', TIPO_IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('abc', TIPO_IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('ab12', TIPO_IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('AND', TIPO_IDENTIFICADOR);
+});
+
 describe('Reconhecimento de Constantes', () => {
-    const tipo = 'CONSTANTE';
-    test('deve retornar CONSTANTE com lexema 45', () => {
-        const tokens = analisadorLexico.analisar('45');
+    testarQuandoDeveGerarUmaUnicaToken('45', TIPO_CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('+45', TIPO_CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('-45', TIPO_CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('45.3', TIPO_CONSTANTE);
     
-        expect(tokens).toEqual([{
-            lexema: '45',
-            tipo: TIPO_CONSTANTE
-        }]);
-    });
-    
-    test('deve retornar CONSTANTE com lexema +45', () => {
-        const tokens = analisadorLexico.analisar('+45');
-    
-        expect(tokens).toEqual([{
-            lexema: '+45',
-            tipo: TIPO_CONSTANTE
-        }]);
-    });
-
-    test('deve retornar CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar('-45');
-    
-        expect(tokens).toEqual([{
-            lexema: '-45',
-            tipo: TIPO_CONSTANTE
-        }]);
-    });
-
-    test('deve retornar CONSTANTE com lexema 45.3', () => {
-        const tokens = analisadorLexico.analisar('45.3');
-    
-        expect(tokens).toEqual([{
-            lexema: '45.3',
-            tipo: TIPO_CONSTANTE
-        }]);
-    });
-
     test('deve retornar CONSTANTE com lexema 45.35, DESCONHECIDO com lexema . e CONSTANTE com lexema 25', () => {
         const tokens = analisadorLexico.analisar('45.35.25');
     
