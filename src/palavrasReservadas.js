@@ -1,17 +1,19 @@
+import { ADDOP, MULOP, NEGACAO } from './tiposTokens';
+
 const palavrasReservadas = [{
-    tipo: 'NEGACAO',
+    tipo: NEGACAO,
     lexema: 'not'
 }, {
-    tipo: 'MULOP',
+    tipo: MULOP,
     lexema: 'div'
 }, {
-    tipo: 'MULOP',
+    tipo: MULOP,
     lexema: 'mod'
 }, {
-    tipo: 'MULOP',
+    tipo: MULOP,
     lexema: 'and'
 }, {
-    tipo: 'ADDOP',
+    tipo: ADDOP,
     lexema: 'or'
 }];
 

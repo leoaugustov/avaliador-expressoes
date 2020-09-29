@@ -1,0 +1,10 @@
+export const RELOP = 'RELOP';
+export const ADDOP = 'ADDOP';
+export const MULOP = 'MULOP';
+export const CONSTANTE = 'CONSTANTE';
+export const IDENTIFICADOR = 'IDENTIFICADOR';
+export const DESCONHECIDO = 'DESCONHECIDO';
+export const NEGACAO = 'NEGACAO';
+export const VIRGULA = 'VIRGULA';
+export const ABERTURA_PARENTESES = 'ABERTURA_PARENTESES';
+export const FECHAMENTO_PARENTESES = 'FECHAMENTO_PARENTESES';

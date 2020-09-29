@@ -1,36 +1,21 @@
 import analisadorLexico from '../src/analisadorLexico';
+import { RELOP, ADDOP, MULOP, CONSTANTE, IDENTIFICADOR, DESCONHECIDO } from '../src/tiposTokens';
+import { TOKEN_VIRGULA, TOKEN_ABERTURA_PARENTESES, TOKEN_FECHAMENTO_PARENTESES } from '../src/simbolosValidos';
 
-const TIPO_RELOP = 'RELOP';
-const TIPO_MULOP = 'MULOP';
-const TIPO_ADDOP = 'ADDOP';
-const TIPO_CONSTANTE = 'CONSTANTE';
-const TIPO_IDENTIFICADOR = 'IDENTIFICADOR';
 const TOKEN_DESCONHECIDA_LEXEMA_PONTO = {
-    tipo: 'DESCONHECIDO',
+    tipo: DESCONHECIDO,
     lexema: '.'
 };
-const TOKEN_ABERTURA_PARENTESES = {
-    tipo: 'ABERTURA-PARENTESES',
-    lexema: '('
-};
-const TOKEN_FECHAMENTO_PARENTESES = {
-    tipo: 'FECHAMENTO-PARENTESES',
-    lexema: ')'
-};
-const TOKEN_VIRGULA = {
-    tipo: 'VIRGULA',
-    lexema: ','
-    };
 const TOKEN_ADDOP_LEXEMA_SINAL_MENOS = {
-    tipo: TIPO_ADDOP,
+    tipo: ADDOP,
     lexema: '-'
 };
 const TOKEN_MULOP = {
-    tipo: TIPO_MULOP,
+    tipo: MULOP,
     lexema: '*'
 };
 const TOKEN_RELOP = {
-    tipo: TIPO_RELOP,
+    tipo: RELOP,
     lexema: '='
 };
 
@@ -46,52 +31,52 @@ function testarQuandoDeveGerarUmaUnicaToken(lexema, tipo) {
 }
 
 describe('Reconhecimento de RELOPs', () => {
-    testarQuandoDeveGerarUmaUnicaToken('=', TIPO_RELOP);
-    testarQuandoDeveGerarUmaUnicaToken('<>', TIPO_RELOP);
-    testarQuandoDeveGerarUmaUnicaToken('<', TIPO_RELOP);
-    testarQuandoDeveGerarUmaUnicaToken('<=', TIPO_RELOP);
-    testarQuandoDeveGerarUmaUnicaToken('>', TIPO_RELOP);
-    testarQuandoDeveGerarUmaUnicaToken('>=', TIPO_RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('=', RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<>', RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<', RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('<=', RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('>', RELOP);
+    testarQuandoDeveGerarUmaUnicaToken('>=', RELOP);
 });
 
 describe('Reconhecimento de MULOPs', () => {
-    testarQuandoDeveGerarUmaUnicaToken('*', TIPO_MULOP);
-    testarQuandoDeveGerarUmaUnicaToken('/', TIPO_MULOP);
-    testarQuandoDeveGerarUmaUnicaToken('div', TIPO_MULOP);
-    testarQuandoDeveGerarUmaUnicaToken('mod', TIPO_MULOP);
-    testarQuandoDeveGerarUmaUnicaToken('and', TIPO_MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('*', MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('/', MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('div', MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('mod', MULOP);
+    testarQuandoDeveGerarUmaUnicaToken('and', MULOP);
 });
 
 describe('Reconhecimento de ADDOPs', () => {
-    testarQuandoDeveGerarUmaUnicaToken('+', TIPO_ADDOP);
-    testarQuandoDeveGerarUmaUnicaToken('-', TIPO_ADDOP);
-    testarQuandoDeveGerarUmaUnicaToken('or', TIPO_ADDOP);
+    testarQuandoDeveGerarUmaUnicaToken('+', ADDOP);
+    testarQuandoDeveGerarUmaUnicaToken('-', ADDOP);
+    testarQuandoDeveGerarUmaUnicaToken('or', ADDOP);
 });
 
 describe('Reconhecimento de Identificadores', () => {
-    testarQuandoDeveGerarUmaUnicaToken('a', TIPO_IDENTIFICADOR);
-    testarQuandoDeveGerarUmaUnicaToken('abc', TIPO_IDENTIFICADOR);
-    testarQuandoDeveGerarUmaUnicaToken('ab12', TIPO_IDENTIFICADOR);
-    testarQuandoDeveGerarUmaUnicaToken('AND', TIPO_IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('a', IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('abc', IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('ab12', IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('AND', IDENTIFICADOR);
 });
 
 describe('Reconhecimento de Constantes', () => {
-    testarQuandoDeveGerarUmaUnicaToken('45', TIPO_CONSTANTE);
-    testarQuandoDeveGerarUmaUnicaToken('+45', TIPO_CONSTANTE);
-    testarQuandoDeveGerarUmaUnicaToken('-45', TIPO_CONSTANTE);
-    testarQuandoDeveGerarUmaUnicaToken('45.3', TIPO_CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('45', CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('+45', CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('-45', CONSTANTE);
+    testarQuandoDeveGerarUmaUnicaToken('45.3', CONSTANTE);
     
     test('deve retornar CONSTANTE com lexema 45.35, DESCONHECIDO com lexema . e CONSTANTE com lexema 25', () => {
         const tokens = analisadorLexico.analisar('45.35.25');
     
         expect(tokens).toEqual([{
             lexema: '45.35',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }, {
             ...TOKEN_DESCONHECIDA_LEXEMA_PONTO, 
         }, {
             lexema: '25',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -102,7 +87,7 @@ describe('Reconhecimento de Constantes', () => {
             ...TOKEN_DESCONHECIDA_LEXEMA_PONTO
         }, {
             lexema: '45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -111,7 +96,7 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: '45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }, {
             ...TOKEN_DESCONHECIDA_LEXEMA_PONTO
         }]);
@@ -124,7 +109,7 @@ describe('Reconhecimento de Constantes', () => {
             ...TOKEN_ABERTURA_PARENTESES
         }, {
             lexema: '-45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -137,7 +122,7 @@ describe('Reconhecimento de Constantes', () => {
             ...TOKEN_ADDOP_LEXEMA_SINAL_MENOS
         }, {
             lexema: '45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -146,12 +131,12 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: '5',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }, {
             ...TOKEN_ADDOP_LEXEMA_SINAL_MENOS
         }, {
             lexema: '45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -160,12 +145,12 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: 'a',
-            tipo: TIPO_IDENTIFICADOR
+            tipo: IDENTIFICADOR
         }, {
             ...TOKEN_ADDOP_LEXEMA_SINAL_MENOS
         }, {
             lexema: '45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -174,12 +159,12 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: '5',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }, {
             ...TOKEN_ADDOP_LEXEMA_SINAL_MENOS
         }, {
             lexema: '-5',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -190,7 +175,7 @@ describe('Reconhecimento de Constantes', () => {
             ...TOKEN_VIRGULA
         }, {
             lexema: '-45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -201,7 +186,7 @@ describe('Reconhecimento de Constantes', () => {
             ...TOKEN_VIRGULA
         }, {
             lexema: '-45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -210,12 +195,12 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: 'a',
-            tipo: TIPO_IDENTIFICADOR
+            tipo: IDENTIFICADOR
         }, {
             ...TOKEN_MULOP
         }, {
             lexema: '-45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 
@@ -224,12 +209,12 @@ describe('Reconhecimento de Constantes', () => {
     
         expect(tokens).toEqual([{
             lexema: 'a',
-            tipo: TIPO_IDENTIFICADOR
+            tipo: IDENTIFICADOR
         }, {
             ...TOKEN_RELOP
         }, {
             lexema: '-45',
-            tipo: TIPO_CONSTANTE
+            tipo: CONSTANTE
         }]);
     });
 });

@@ -1,3 +1,4 @@
+import { RELOP, ADDOP, MULOP, CONSTANTE, IDENTIFICADOR, DESCONHECIDO, FECHAMENTO_PARENTESES } from '../src/tiposTokens';
 import palavrasReservadas from './palavrasReservadas';
 import simbolosValidos from './simbolosValidos';
 
@@ -7,23 +8,11 @@ let lexema = '';
 
 function ultimaTokenNaoEh(...tipos) {
     let ultimaToken = tokens.slice(-1).pop();
-    
+
     if(ultimaToken) {
         return tipos.some(tipoToken => tipoToken == ultimaToken.tipo) == false;
     }
     return true;
-}
-
-function salvarRelop() {
-    salvarToken('RELOP');
-}
-
-function salvarConstante() {
-    salvarToken('CONSTANTE');
-}
-
-function salvarTokenDesconhecida() {
-    salvarToken('DESCONHECIDO');
 }
 
 function salvarToken(tipo) {
@@ -48,11 +37,11 @@ function ehLetra(str) {
 }
 
 function encontrarPalavraReservadaPeloLexema(lexema) {
-    return palavrasReservadas.find(token => token.lexema === lexema);
+    return Object.values(palavrasReservadas).find(token => token.lexema === lexema);
 }
 
 function encontrarSimboloValidoPeloLexema(lexema) {
-    return simbolosValidos.find(token => token.lexema === lexema);
+    return Object.values(simbolosValidos).find(token => token.lexema === lexema);
 }
 
 function analisar(codigo) {
@@ -75,7 +64,7 @@ function analisar(codigo) {
                 } else if(caracter == '=') {
                     estado = 0;
                     lexema += caracter;
-                    salvarRelop();
+                    salvarToken(RELOP);
                 } else if(caracter == '>') {
                     estado = 6;
                     lexema += caracter;
@@ -94,7 +83,7 @@ function analisar(codigo) {
                     }
                 }
                 estado = 0;
-                salvarRelop();
+                salvarToken(RELOP);
                 break;
 
             case 6:
@@ -106,14 +95,14 @@ function analisar(codigo) {
                     }
                 }
                 estado = 0;
-                salvarRelop();
+                salvarToken(RELOP);
                 break;
 
             case 9:
                 if(caracter == '*' || caracter == '/') {
                     estado = 0;
                     lexema += caracter;
-                    salvarToken('MULOP');
+                    salvarToken(MULOP);
                 }else {
                     estado = 11;
                     c--;
@@ -131,7 +120,7 @@ function analisar(codigo) {
                 break;
 
             case 12:
-                if(ultimaTokenNaoEh('CONSTANTE', 'IDENTIFICADOR', 'FECHAMENTO-PARENTESES') && ehDigito(caracter)) {
+                if(ultimaTokenNaoEh(CONSTANTE, IDENTIFICADOR, FECHAMENTO_PARENTESES) && ehDigito(caracter)) {
                     estado = 15;
                     c--;
                 }else {
@@ -139,7 +128,7 @@ function analisar(codigo) {
                         c--;
                     }
                     estado = 0;
-                    salvarToken('ADDOP');
+                    salvarToken(ADDOP);
                 }
                 break;
 
@@ -163,7 +152,7 @@ function analisar(codigo) {
                         c--;
                     }
                     estado = 0;
-                    salvarConstante();
+                    salvarToken(CONSTANTE);
                 }
                 break;
 
@@ -176,10 +165,10 @@ function analisar(codigo) {
                         c--;
                     }
                     estado = 0;
-                    salvarConstante();
+                    salvarToken(CONSTANTE);
 
                     lexema += '.';
-                    salvarTokenDesconhecida();
+                    salvarToken(DESCONHECIDO);
                 }
                 break;
             
@@ -191,7 +180,7 @@ function analisar(codigo) {
                         c--;
                     }
                     estado = 0;
-                    salvarConstante();
+                    salvarToken(CONSTANTE);
                 }
                 break;
 
@@ -208,7 +197,7 @@ function analisar(codigo) {
                         lexema = '';
                         tokens.push(tokenSimboloValido);
                     }else {
-                        salvarTokenDesconhecida();
+                        salvarToken(DESCONHECIDO);
                     }
                 }
                 break;
@@ -227,7 +216,7 @@ function analisar(codigo) {
                         tokens.push(tokenReservada);
                         lexema = '';
                     }else {
-                        salvarToken('IDENTIFICADOR');
+                        salvarToken(IDENTIFICADOR);
                     }
                 }
                 break;
