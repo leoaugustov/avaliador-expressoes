@@ -1,4 +1,4 @@
-import analisadorLexico from '../src/analisadorLexico';
+import AnalisadorLexico from '../src/analisadorLexico';
 import { RELOP, ADDOP, MULOP, CONSTANTE, IDENTIFICADOR, DESCONHECIDO } from '../src/tiposTokens';
 import { TOKEN_VIRGULA, TOKEN_ABERTURA_PARENTESES, TOKEN_FECHAMENTO_PARENTESES } from '../src/simbolosValidos';
 
@@ -19,9 +19,21 @@ const TOKEN_RELOP = {
     lexema: '='
 };
 
+function gerarTodasTokens(entrada) {
+    const analisadorLexico = new AnalisadorLexico(entrada);
+    const tokens = [];
+
+    let token;
+    while(token = analisadorLexico.encontrarProximaToken()) {
+        tokens.push(token);
+    }
+
+    return tokens;
+}
+
 function testarQuandoDeveGerarUmaUnicaToken(lexema, tipo) {
     test(`deve retornar ${tipo} com lexema ${lexema}`, () => {
-        const tokens = analisadorLexico.analisar(lexema);
+        const tokens = gerarTodasTokens(lexema);
 
         expect(tokens).toEqual([{
             lexema,
@@ -67,7 +79,7 @@ describe('Reconhecimento de Constantes', () => {
     testarQuandoDeveGerarUmaUnicaToken('45.3', CONSTANTE);
     
     test('deve retornar CONSTANTE com lexema 45.35, DESCONHECIDO com lexema . e CONSTANTE com lexema 25', () => {
-        const tokens = analisadorLexico.analisar('45.35.25');
+        const tokens = gerarTodasTokens('45.35.25');
     
         expect(tokens).toEqual([{
             lexema: '45.35',
@@ -81,7 +93,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar DESCONHECIDO com lexema . e CONSTANTE com lexema 45', () => {
-        const tokens = analisadorLexico.analisar('.45');
+        const tokens = gerarTodasTokens('.45');
     
         expect(tokens).toEqual([{
             ...TOKEN_DESCONHECIDA_LEXEMA_PONTO
@@ -92,7 +104,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar CONSTANTE com lexema 45 e DESCONHECIDO com lexema .', () => {
-        const tokens = analisadorLexico.analisar('45.');
+        const tokens = gerarTodasTokens('45.');
     
         expect(tokens).toEqual([{
             lexema: '45',
@@ -103,7 +115,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar ABERTURA-PARENTESES e CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar('(-45');
+        const tokens = gerarTodasTokens('(-45');
     
         expect(tokens).toEqual([{
             ...TOKEN_ABERTURA_PARENTESES
@@ -114,7 +126,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar FECHAMENTO-PARENTESES, ADDOP com lexema - e CONSTANTE com lexema 45', () => {
-        const tokens = analisadorLexico.analisar(')-45');
+        const tokens = gerarTodasTokens(')-45');
     
         expect(tokens).toEqual([{
             ...TOKEN_FECHAMENTO_PARENTESES
@@ -127,7 +139,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar CONSTANTE com lexema 5, ADDOP com lexema - e CONSTANTE com lexema 45', () => {
-        const tokens = analisadorLexico.analisar('5-45');
+        const tokens = gerarTodasTokens('5-45');
     
         expect(tokens).toEqual([{
             lexema: '5',
@@ -141,7 +153,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar IDENTIFICADOR com lexema a, ADDOP com lexema - e CONSTANTE com lexema 45', () => {
-        const tokens = analisadorLexico.analisar('a-45');
+        const tokens = gerarTodasTokens('a-45');
     
         expect(tokens).toEqual([{
             lexema: 'a',
@@ -155,7 +167,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar CONSTANTE com lexema 5, ADDOP com lexema - e CONSTANTE com lexema -5', () => {
-        const tokens = analisadorLexico.analisar('5--5');
+        const tokens = gerarTodasTokens('5--5');
     
         expect(tokens).toEqual([{
             lexema: '5',
@@ -169,7 +181,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar VIRGULA e CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar(',-45');
+        const tokens = gerarTodasTokens(',-45');
     
         expect(tokens).toEqual([{
             ...TOKEN_VIRGULA
@@ -180,7 +192,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar VIRGULA e CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar(',-45');
+        const tokens = gerarTodasTokens(',-45');
     
         expect(tokens).toEqual([{
             ...TOKEN_VIRGULA
@@ -191,7 +203,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar IDENTIFICADOR com lexema a, MULOP e CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar(`a ${TOKEN_MULOP.lexema} -45`);
+        const tokens = gerarTodasTokens(`a ${TOKEN_MULOP.lexema} -45`);
     
         expect(tokens).toEqual([{
             lexema: 'a',
@@ -205,7 +217,7 @@ describe('Reconhecimento de Constantes', () => {
     });
 
     test('deve retornar IDENTIFICADOR com lexema a, RELOP e CONSTANTE com lexema -45', () => {
-        const tokens = analisadorLexico.analisar(`a ${TOKEN_RELOP.lexema} -45`);
+        const tokens = gerarTodasTokens(`a ${TOKEN_RELOP.lexema} -45`);
     
         expect(tokens).toEqual([{
             lexema: 'a',
