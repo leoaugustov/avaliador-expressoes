@@ -70,6 +70,20 @@ describe('Reconhecimento de Identificadores', () => {
     testarQuandoDeveGerarUmaUnicaToken('abc', IDENTIFICADOR);
     testarQuandoDeveGerarUmaUnicaToken('ab12', IDENTIFICADOR);
     testarQuandoDeveGerarUmaUnicaToken('AND', IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('diva', IDENTIFICADOR);
+    testarQuandoDeveGerarUmaUnicaToken('ora', IDENTIFICADOR);
+
+    test('deve retornar INDENTIFICADOR com lexema abc e INDENTIFICADOR com lexema def', () => {
+        const tokens = gerarTodasTokens('abc def');
+
+        expect(tokens).toEqual([{
+            lexema: 'abc',
+            tipo: IDENTIFICADOR
+        }, {
+            lexema: 'def',
+            tipo: IDENTIFICADOR
+        }]);
+    });
 });
 
 describe('Reconhecimento de Constantes', () => {
@@ -230,3 +244,9 @@ describe('Reconhecimento de Constantes', () => {
         }]);
     });
 });
+
+describe('Tratamento de caracteres desconhecidos', () => {
+    testarQuandoDeveGerarUmaUnicaToken('@', DESCONHECIDO);
+    testarQuandoDeveGerarUmaUnicaToken('.', DESCONHECIDO);
+    testarQuandoDeveGerarUmaUnicaToken(';', DESCONHECIDO);
+});    
