@@ -24,6 +24,7 @@ module.exports = {
     },
     devServer: {
         contentBase: __dirname + '/build',
+        watchContentBase: true,
         compress: true,
         port: 9000
     }
