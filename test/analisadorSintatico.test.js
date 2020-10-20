@@ -88,6 +88,11 @@ describe('Regra TERM', () => {
             const analisadorSintatico = criarAnalisadorSintatico(IDENTIFICADOR, MULOP, CONSTANTE);
             expect(analisadorSintatico.analisar()).toBe(true);
         });
+
+        test('quando tokens são IDENTIFICADOR, MULOP, CONSTANTE, MULOP e IDENTIFICADOR', () => {
+            const analisadorSintatico = criarAnalisadorSintatico(IDENTIFICADOR, MULOP, CONSTANTE, MULOP, IDENTIFICADOR);
+            expect(analisadorSintatico.analisar()).toBe(true);
+        });
     });
 
     describe('Deve estar sintaticamente incorreto', () => {
@@ -117,6 +122,11 @@ describe('Regra SIMPLE EXPRESSION', () => {
     describe('Deve estar sintaticamente correto', () => {
         test('quando tokens são IDENTIFICADOR, ADDOP e CONSTANTE', () => {
             const analisadorSintatico = criarAnalisadorSintatico(IDENTIFICADOR, ADDOP, CONSTANTE);
+            expect(analisadorSintatico.analisar()).toBe(true);
+        });
+
+        test('quando tokens são IDENTIFICADOR, ADDOP, CONSTANTE, ADDOP e IDENTIFICADOR', () => {
+            const analisadorSintatico = criarAnalisadorSintatico(IDENTIFICADOR, ADDOP, CONSTANTE, ADDOP, IDENTIFICADOR);
             expect(analisadorSintatico.analisar()).toBe(true);
         });
     });

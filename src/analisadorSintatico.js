@@ -59,7 +59,7 @@ export default function AnalisadorSintatico(analisadorLexico) {
             let token = pegarProximaToken();
 
             if(token && token.tipo == ADDOP) {
-                return reconhecerTerm();
+                return reconhecerSimpleExpression();
             }else {
                 tokenPendente = token;
                 return true;
@@ -73,7 +73,7 @@ export default function AnalisadorSintatico(analisadorLexico) {
             let token = pegarProximaToken();
 
             if(token && token.tipo == MULOP) {
-                return reconhecerFactor();
+                return reconhecerTerm();
             }else {
                 tokenPendente = token;
                 return true;
