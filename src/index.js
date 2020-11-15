@@ -7,7 +7,7 @@ document.querySelector('form').onsubmit = e => {
     const entrada = new FormData(formulario).get('entrada');
     const analisadorSintatico = new AnalisadorSintatico(new AnalisadorLexico(entrada));
 
-    const sintaticamenteCorreto = analisadorSintatico.analisar();
+    const { sintaticamenteCorreto } = analisadorSintatico.analisar();
 
     document.getElementById("secao-resultado-analise-sintatica").innerHTML = `
     <div class="alert alert-${sintaticamenteCorreto ? 'success': 'danger'} animate__animated animate__zoomIn" role="alert">

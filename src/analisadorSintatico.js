@@ -11,6 +11,7 @@ import {
 } from './tiposTokens';
 
 export default function AnalisadorSintatico(analisadorLexico) {
+    let tokens = [];
     let tokenPendente;
 
     function pegarProximaToken() {
@@ -21,7 +22,12 @@ export default function AnalisadorSintatico(analisadorLexico) {
                 tokenPendente = null;
             }
         }
-        return analisadorLexico.encontrarProximaToken();
+
+        const token = analisadorLexico.encontrarProximaToken();
+        if(token) {
+            tokens.push(token);
+        }
+        return token;
     }
 
     function reconhecerExpressionList() {
@@ -105,6 +111,10 @@ export default function AnalisadorSintatico(analisadorLexico) {
     }
     
     this.analisar = () => {
-        return reconhecerExpressionList();
+        const sintaticamenteCorreto = reconhecerExpressionList();
+        if(sintaticamenteCorreto) {
+            return { sintaticamenteCorreto, tokens };
+        }
+        return { sintaticamenteCorreto };
     }
 }
