@@ -196,6 +196,13 @@ describe('Operadores relacionais', () => {
 });
 
 describe('Operações com Identificadores', () => {
+    test('deve calcular 3 quando "a"', () => {
+        realizarAssercaoExpressaoValida(criarTokens(['a', 3]), [{
+            expressao: 'a',
+            resultado: 3
+        }]);
+    });
+
     test('deve calcular 5 quando "a + b"', () => {
         realizarAssercaoExpressaoValida(criarTokens(['a', 3], '+', ['b', 2]), [{
             expressao: 'a + b',
@@ -305,6 +312,14 @@ describe('Operadores lógicos', () => {
     test('deve haver erro na avaliação quando "not 3 + 2"', () => {
         realizarAssercaoExpressaoInvalida(criarTokens('not', 3, '+', 2), [{
             expressao: 'not 3 + 2',
+            erroAvaliacao: true,
+            mensagem: expect.anything()
+        }]);
+    });
+
+    test('deve calcular falso quando "not (3 > 2) and 1"', () => {
+        realizarAssercaoExpressaoInvalida(criarTokens('not', '(', 3, '>', 2, ')', 'and', 1), [{
+            expressao: 'not ( 3 > 2 ) and 1',
             erroAvaliacao: true,
             mensagem: expect.anything()
         }]);

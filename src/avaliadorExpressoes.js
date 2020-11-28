@@ -136,13 +136,12 @@ export default function AvaliadorExpressoes() {
 
         if(quantidadeTokensSubexpressao === 1) {
             return {
-                valor: eval(subexpressao.tokens[0].lexema)
+                valor: eval(subexpressao.tokens[0].valor)
             };
         }else if(quantidadeTokensSubexpressao === 2 || quantidadeTokensSubexpressao === 3) {
             if(tiposSaoCompativeis(subexpressao.tokens)) {
                 const valorCalculado = eval(montarExpressaoParaCalculo(subexpressao.tokens));
-                tokensExpressao.splice(subexpressao.indiceInicio, subexpressao.indiceFinal + 1, {
-                    lexema: valorCalculado.toString(),
+                tokensExpressao.splice(subexpressao.indiceInicio, subexpressao.indiceFinal - subexpressao.indiceInicio + 1, {
                     valor: valorCalculado
                 });
         
