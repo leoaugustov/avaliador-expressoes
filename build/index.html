@@ -4,20 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avaliador de Expressões</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+            integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </head>
 <body>
-    <main class="container animate__animated animate__fadeInDown" style="text-align: center;">
-        <h1 class="text-primary mt-2 mb-4 mx-auto">Avaliador de Expressões</h1>
-        <section>
-            <form>
-                <textarea name="entrada" class="form-control" rows="3" placeholder="Digite as expressões aqui..." 
-                        style="resize: none;" required></textarea>
-                <button class="btn btn-block btn-primary mt-2">Analisar</button>
-            </form>
+    <main id="app" class="container pb-5 animate__animated animate__fadeInDown">
+        <div class="text-center">
+            <h1 class="text-primary mt-2 mb-4 font-weight-bold">Avaliador de Expressões</h1>
+        </div>
+        <section class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <form @submit.prevent="analisar">
+                    <textarea v-model="entrada" class="form-control" rows="3" placeholder="Digite as expressões aqui..." 
+                            style="resize: none;" required>
+                    </textarea>
+                    <button class="btn btn-block btn-primary mt-2">Analisar</button>
+                </form>
+            </div>
         </section>
-        <section id="secao-resultado-analise-sintatica" class="mt-5">
+        <section class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-5">
+                <p v-if="realizouAnaliseSintatica" class="h3 my-4 text-center">
+                    {{ sintaticamenteCorreto ? 'Nenhum erro sintático 🥳' : 'Uma ou mais expressões possuem erro sintático 😕' }}
+                </p>
+                <div v-if="deveMostrarConfiguracaoIdentificadores" class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            Informe o tipo e o valor de 
+                            <span class="badge badge-light">{{ identificadores[indiceIdentificador].lexema }}</span>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ mensagemProgresso }}</h6>
+                        <form @submit.prevent="proximoIdentificador">
+                            <div class="row">
+                                <div class="col">
+                                    <label>Tipo</label>
+                                    <fieldset class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input v-model="tipoIdentificador" type="radio" id="radioNumerico" 
+                                                            value="NUMERICO" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="radioNumerico">Numérico</label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input v-model="tipoIdentificador" type="radio" id="radioBooleano" 
+                                                            value="BOOLEANO" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="radioBooleano">Booleano</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="inputValorNumerico">Valor</label>
+                                    <input v-if="tipoIdentificadorEhNumerico" v-model.number="identificadores[indiceIdentificador].valor" 
+                                            type="number" step="any" id="inputValorNumerico" class="form-control" 
+                                            placeholder="Digite o valor aqui" required>
+                                    <fieldset v-else class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-10">
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input v-model="identificadores[indiceIdentificador].valor" id="radioVerdadeiro" 
+                                                            type="radio" value="true" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="radioVerdadeiro">
+                                                    Verdadeiro
+                                                    </label>
+                                                </div>
+                                                <div class="custom-control custom-radio custom-control-inline">
+                                                    <input v-model="identificadores[indiceIdentificador].valor" id="radioFalso" 
+                                                            type="radio" value="false" class="custom-control-input" required>
+                                                    <label class="custom-control-label" for="radioFalso">
+                                                    Falso
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </div>
+                            </div>
+                            <button @click.prevent="voltarIdentificadorAnterior" :disabled="ehPrimeiroIdentificador" 
+                                    class="btn btn-outline-primary mt-2 px-3">
+                                <font-awesome-icon icon="arrow-circle-left"></font-awesome-icon>
+                                Anterior
+                            </button>
+                            <button type="submit" :class="[ehUltimoIdentificador ? 'btn-success' : 'btn-primary']" 
+                                    class="btn mt-2 px-3 float-right">
+                                {{ ehUltimoIdentificador ? 'Avaliar Expressões' : 'Próximo' }}
+                                <font-awesome-icon :icon="ehUltimoIdentificador ? 'check-circle' : 'arrow-circle-right'"/>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div v-if="deveMostrarExpressoesAvaliadas && identificadores.length > 0" class="card text-center mb-4">
+                    <div class="card-header h6">Identificadores</div>
+                    <div class="card-body">
+                        <kbd v-for="identificador in identificadores" 
+                                class="bg-primary text-nowrap mr-1">{{ identificador.lexema }} = {{ identificador.valor }}</kbd>
+                    </div>
+                </div>
+                <div v-if="deveMostrarExpressoesAvaliadas" class="card text-center">
+                    <div class="card-header h6">Expressões Avaliadas</div>
+                    <ul class="list-group list-group-flush">
+                        <li v-for="avaliacao in avaliacoes" class="list-group-item">
+                            <kbd :class="[avaliacao.erroAvaliacao ? 'bg-danger' : 'bg-success']" 
+                                    class="text-nowrap">{{ avaliacao.expressao }}</kbd>
+                            <samp> : {{ avaliacao.erroAvaliacao ? avaliacao.mensagem : avaliacao.resultado }}</samp>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </section>
     </main>
 </body>

@@ -22,6 +22,11 @@ module.exports = {
           }
         ]
     },
+    resolve: {
+      alias: {
+        'vue$': 'vue/dist/vue.esm.js'
+      }
+    },
     devServer: {
         contentBase: __dirname + '/build',
         watchContentBase: true,
