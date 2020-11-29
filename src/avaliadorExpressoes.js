@@ -105,18 +105,27 @@ export default function AvaliadorExpressoes() {
         return tokensParaAvaliacao;
     }
 
-    function tiposSaoCompativeis(tokensExpressao) {
+    function verificacaoSemantica(tokensExpressao) {
         if(tokensExpressao.length === 2) { // negação lógica (not)
-            return typeof tokensExpressao[1].valor === 'boolean';
+            return {
+                erroSemantico: typeof tokensExpressao[1].valor !== 'boolean',
+                mensagem: "Tipos incompatíveis"
+            };
         }
 
         const operador = operadores.get(tokensExpressao[1].lexema);
-
         const ehOperacaoAritmeticaComNumeros = operador.tipoOperacao === ARITMETICA 
             && typeof tokensExpressao[0].valor === 'number' && typeof tokensExpressao[2].valor === 'number';
 
-        const naoEhDivisaoPorZero = ! (['/', 'div'].includes(operador.lexema) && tokensExpressao[2].valor === 0);
+        const EhDivisaoPorZero = ['/', 'div'].includes(operador.lexema) && tokensExpressao[2].valor === 0;
         
+        if(ehOperacaoAritmeticaComNumeros && EhDivisaoPorZero) {
+            return {
+                erroSemantico: true,
+                mensagem: "Divisão por 0"
+            };
+        }
+
         const ehOperacaoLogicaComBooleanos = operador.tipoOperacao === LOGICA 
             && typeof tokensExpressao[0].valor === 'boolean' && typeof tokensExpressao[2].valor === 'boolean';
 
@@ -126,8 +135,18 @@ export default function AvaliadorExpressoes() {
         const ehOperacaoRelacionalComBooleanos = ['=', '<>'].includes(operador.lexema) 
             && typeof tokensExpressao[0].valor === 'boolean' && typeof tokensExpressao[2].valor === 'boolean';
 
-        return (ehOperacaoAritmeticaComNumeros && naoEhDivisaoPorZero) || ehOperacaoLogicaComBooleanos 
+        const semanticamenteCorreto = ehOperacaoAritmeticaComNumeros || ehOperacaoLogicaComBooleanos 
             || ehOperacaoRelacionalComNumeros || ehOperacaoRelacionalComBooleanos;
+        
+        if(semanticamenteCorreto) {
+            return {
+                erroSemantico: false
+            }
+        }
+        return {
+            erroSemantico: true,
+            mensagem: "Tipos incompatíveis"
+        }
     }
 
     function calcularValor(tokensExpressao) {
@@ -139,19 +158,19 @@ export default function AvaliadorExpressoes() {
                 valor: eval(subexpressao.tokens[0].valor)
             };
         }else if(quantidadeTokensSubexpressao === 2 || quantidadeTokensSubexpressao === 3) {
-            if(tiposSaoCompativeis(subexpressao.tokens)) {
-                const valorCalculado = eval(montarExpressaoParaCalculo(subexpressao.tokens));
-                tokensExpressao.splice(subexpressao.indiceInicio, subexpressao.indiceFinal - subexpressao.indiceInicio + 1, {
-                    valor: valorCalculado
-                });
-        
-                return calcularValor(tokensExpressao);
+            const { erroSemantico, mensagem } = verificacaoSemantica(subexpressao.tokens);
+            if(erroSemantico) {
+                return {
+                    erro: true,
+                    mensagem
+                };
             }
-
-            return {
-                erro: true,
-                mensagem: "Tipos incompatíveis!"
-            };
+            const valorCalculado = eval(montarExpressaoParaCalculo(subexpressao.tokens));
+            tokensExpressao.splice(subexpressao.indiceInicio, subexpressao.indiceFinal - subexpressao.indiceInicio + 1, {
+                valor: valorCalculado
+            });
+    
+            return calcularValor(tokensExpressao);
         }
         return calcularValor(subexpressao.tokens);
     }
