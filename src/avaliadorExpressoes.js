@@ -35,7 +35,9 @@ export default function AvaliadorExpressoes() {
             if(operadores.has(token.lexema)) {
                 const operador = operadores.get(token.lexema);
 
-                if(operador.precedencia > proximoOperador.precedencia) {
+                if(operador.lexema === TOKEN_NEGACAO.lexema && operador.precedencia >= proximoOperador.precedencia 
+                    || operador.precedencia > proximoOperador.precedencia) {
+
                     proximoOperador.indice = indice;
                     proximoOperador.precedencia = operador.precedencia;
                 }

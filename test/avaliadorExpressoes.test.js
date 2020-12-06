@@ -302,6 +302,13 @@ describe('Operadores lógicos', () => {
         }]);
     });
 
+    test.only('deve haver erro na avaliação quando "not not a"', () => {
+        realizarAssercaoExpressaoInvalida(criarTokens('not', 'not', ['a', false]), [{
+            expressao: 'not not a',
+            resultado: false
+        }]);
+    });
+
     test('deve calcular falso quando "not (3 > 2)"', () => {
         realizarAssercaoExpressaoValida(criarTokens('not', '(', 3, '>', 2, ')'), [{
             expressao: 'not ( 3 > 2 )',
