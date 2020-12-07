@@ -4,6 +4,8 @@ Um avaliador de expressões construído com Javascript durante a disciplina de C
 
 ## Convenções Léxicas
  - `not`: NÃO lógico;
+ - `and`: E lógico;
+ - `or`: OU lógico;
  - `div`: divisão inteira;
  - `mod`: resto;
  - `<>`: desigualdade;
