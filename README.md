@@ -12,7 +12,7 @@ Um avaliador de expressões construído com Javascript durante a disciplina de C
  - `=`: igualdade;
  - um operando pode ser apenas um número ou um identificador;
  - um identificador é formado por letras e dígitos. Deve começar com letra;
- - um identificador por assumir apenas valores booleano ou numérico.
+ - um identificador pode assumir apenas valores booleanos ou numéricos.
 
 ## Precedência de Operadores
 | Precedência | Associatividade | Operador |
